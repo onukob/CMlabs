@@ -2,90 +2,105 @@ namespace Social
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using Social.Extensions;
     using Social.Models;
 
     internal class Program
     {
-        private const string PathDirectory = @"C:\Users\cpyte\Desktop\DevCourse\nikita_atmaykin\Lab-6\Social\Social\Data";
-        private const string PathUsers = PathDirectory + @"\users.json";
-        private const string PathFriends = PathDirectory + @"\friends.json";
-        private const string PathMessages = PathDirectory + @"\messages.json";
+        private static string pathDirectory = string.Empty;
+        private static string pathUsers = string.Empty;
+        private static string pathFriends = string.Empty;
+        private static string pathMessages = string.Empty;
 
         private static void Main(string[] args)
         {
-             var name = "Joline";
+            #if DEBUG
+            pathDirectory = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data");
+            #else
+            pathDirectory = Path.Combine(AppContext.BaseDirectory, "Data");
+            #endif
 
-             if (string.IsNullOrEmpty(name))
-             {
-                Console.WriteLine("Имя должно содержать хоть один символ!");
-                return;
-             }
+            pathDirectory = Path.GetFullPath(pathDirectory);
 
-             var socialDataSource = new SocialDataSource(PathUsers, PathFriends, PathMessages);
+            pathUsers = pathDirectory + @"\users.json";
+            pathFriends = pathDirectory + @"\friends.json";
+            pathMessages = pathDirectory + @"\messages.json";
 
-             var userContext = socialDataSource.GetUserContext(name);
+            Console.WriteLine("Добрый день! Авторизуйтесь, пожалуйста: ");
 
-             var now = DateTime.Today;
+            string name = Console.ReadLine();
 
-             var user = userContext.User;
+            if (string.IsNullOrEmpty(name))
+            {
+               Console.WriteLine("Имя должно содержать хоть один символ!");
+               return;
+            }
 
-             int age = now.Year - user.DateOfBirth.Year;
+            var socialDataSource = new SocialDataSource(pathUsers, pathFriends, pathMessages);
 
-             if (user.DateOfBirth > now.AddYears(-age))
-             {
-                age--;
-             }
+            var userContext = socialDataSource.GetUserContext(name);
 
-             static void PrintNews(List<UserInformation> friends, List<UserInformation> friendshipOffers, List<UserInformation> subcribers, List<News> news)
-             {
-                Console.WriteLine("\n\n\n\t\t\t\tНовости\n");
+            var now = DateTime.Today;
 
-                if (news.Count == 0)
-                {
-                    Console.WriteLine("\t\t\tВ настоящее время новостей нет");
-                }
+            var user = userContext.User;
 
-                news.ForEach(message => Console.WriteLine(
-                    "\t{0} оставил(а) новость, оценок {1}: [{2}] |" + " Содержимое: {3}\n", message.AuthorName, message.Likes.Count, message.Likes.ListToString(), message.Text));
-             }
+            int age = now.Year - user.DateOfBirth.Year;
 
-             Console.ForegroundColor = ConsoleColor.Yellow;
+            if (user.DateOfBirth > now.AddYears(-age))
+            {
+               age--;
+            }
 
-             Console.WriteLine("\n\tЗдравствуйте, {0}! На данный момент вам {1}.\n\n", user.Name, age);
+            static void PrintNews(List<UserInformation> friends, List<UserInformation> friendshipOffers, List<UserInformation> subcribers, List<News> news)
+            {
+               Console.WriteLine("\n\n\n\t\t\t\tНовости\n");
 
-             Console.ForegroundColor = ConsoleColor.Cyan;
+               if (news.Count == 0)
+               {
+                   Console.WriteLine("\t\t\tВ настоящее время новостей нет");
+               }
 
-             Console.Write("\tДрузья: Всего {0} | ", userContext.Friends.Count);
+               news.ForEach(message => Console.WriteLine(
+                   "\t{0} оставил(а) новость, оценок {1}: [{2}] |" + " Содержимое: {3}\n", message.AuthorName, message.Likes.Count, message.Likes.ListToString(), message.Text));
+            }
 
-             userContext.Friends.ForEach(friend => Console.Write(friend.Name + ", " + "id: " + friend.UserId + " | "));
+            Console.ForegroundColor = ConsoleColor.Yellow;
 
-             Console.WriteLine();
+            Console.WriteLine("\n\tЗдравствуйте, {0}! На данный момент вам {1}.\n\n", user.Name, age);
 
-             Console.Write("\n\tДрузья, которые онлайн: Всего {0} | ", userContext.OnlineFriends.Count);
+            Console.ForegroundColor = ConsoleColor.Cyan;
 
-             userContext.OnlineFriends.ForEach(friend => Console.Write(friend.Name + ", " + "id: " + friend.UserId + " | "));
+            Console.Write("\tДрузья: Всего {0} | ", userContext.Friends.Count);
 
-             Console.WriteLine();
+            userContext.Friends.ForEach(friend => Console.Write(friend.Name + ", " + "id: " + friend.UserId + " | "));
 
-             Console.Write("\n\tЗаявки в друзья: Всего {0} | ", userContext.FriendshipOffers.Count);
+            Console.WriteLine();
 
-             userContext.FriendshipOffers.ForEach(friend => Console.Write(friend.Name + ", " + "id: " + friend.UserId + " | "));
+            Console.Write("\n\tДрузья, которые онлайн: Всего {0} | ", userContext.OnlineFriends.Count);
 
-             Console.WriteLine();
+            userContext.OnlineFriends.ForEach(friend => Console.Write(friend.Name + ", " + "id: " + friend.UserId + " | "));
 
-             Console.Write("\n\tПодписчики: Всего {0} | ", userContext.Subscribers.Count);
+            Console.WriteLine();
 
-             userContext.Subscribers.ForEach(friend => Console.Write(friend.Name + ", " + "id: " + friend.UserId + " | "));
+            Console.Write("\n\tЗаявки в друзья: Всего {0} | ", userContext.FriendshipOffers.Count);
 
-             Console.WriteLine();
+            userContext.FriendshipOffers.ForEach(friend => Console.Write(friend.Name + ", " + "id: " + friend.UserId + " | "));
 
-             Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine();
 
-             PrintNews(userContext.Friends, userContext.FriendshipOffers, userContext.Subscribers, userContext.News);
+            Console.Write("\n\tПодписчики: Всего {0} | ", userContext.Subscribers.Count);
 
-             Console.ResetColor();
+            userContext.Subscribers.ForEach(friend => Console.Write(friend.Name + ", " + "id: " + friend.UserId + " | "));
+
+            Console.WriteLine();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
+            PrintNews(userContext.Friends, userContext.FriendshipOffers, userContext.Subscribers, userContext.News);
+
+            Console.ResetColor();
         }
     }
 }

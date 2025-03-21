@@ -2,14 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using Social.Models;
 
     public class Program
     {
-        private const string PathDirectory = @"C:\Users\cpyte\Desktop\DevCourse\nikita_atmaykin\Lab-6\Social\Social\Data";
-        private const string PathUsers = PathDirectory + @"\users.json";
-        private const string PathFriends = PathDirectory + @"\friends.json";
-        private const string PathMessages = PathDirectory + @"\messages.json";
+        private static string pathDirectory = string.Empty;
+        private static string pathUsers = string.Empty;
+        private static string pathFriends = string.Empty;
+        private static string pathMessages = string.Empty;
 
         private static List<User> users;
         private static List<Friend> friends;
@@ -23,10 +24,16 @@
 
             messages = CreateMessagesData.CreateData(users);
 
+            pathDirectory = AppContext.BaseDirectory;
+
+            pathUsers = pathDirectory + @"\users.json";
+            pathFriends = pathDirectory + @"\friends.json";
+            pathMessages = pathDirectory + @"\messages.json";
+
             // serializing data
             try
             {
-                var dataSerializer = new DataSerialize(PathUsers, PathFriends, PathMessages, users, friends, messages);
+                var dataSerializer = new DataSerialize(pathUsers, pathFriends, pathMessages, users, friends, messages);
                 Console.WriteLine("Serializing completed successfully!");
             }
             catch (Exception)
