@@ -1,9 +1,5 @@
 ﻿namespace SecretNotebook
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
     public class Command
     {
         public enum Commands
@@ -12,6 +8,7 @@
             RenameRecord,
             CreateRecord,
             DeleteRecord,
+            ListRecords
         }
     }
 }

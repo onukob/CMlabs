@@ -45,7 +45,7 @@
 
                             Console.ForegroundColor = ConsoleColor.Yellow;
 
-                            Console.WriteLine("\nEnter your command:\t1. Read your records\t2. Rename your record\t3. Create a new record\t4. Delete record\n");
+                            Console.WriteLine("\nEnter your command:\t1. Read your records\t2. Rename your record\t3. Create a new record\t4. Delete record\n5. List records");
 
                             Console.ForegroundColor = ConsoleColor.Magenta;
 
@@ -70,6 +70,10 @@
                                 case Command.Commands.DeleteRecord:
                                     DeleteRecord deleteRecord = new DeleteRecord(dataFromFile, Hash);
                                     deleteRecord.Delete(FileName, Hash);
+                                    break;
+                                case Command.Commands.ListRecords:
+                                    ListRecords listRecords = new ListRecords(dataFromFile, Hash);
+                                    listRecords.List();
                                     break;
                                 default:
                                     break;

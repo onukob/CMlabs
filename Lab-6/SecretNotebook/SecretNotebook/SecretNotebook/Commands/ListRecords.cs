@@ -21,38 +21,38 @@
 
         public void List()
         {
-            while (true)
+            Console.WriteLine("\nListing records...\n");
+
+            int count = 0;
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
+            for (int i = 2; i < splittedText.Count; i += 4)
             {
-                Console.WriteLine("\nListing records...");
-
-                var count = 0;
-
-                Console.ForegroundColor = ConsoleColor.Yellow;
-
-                foreach (var item in splittedText)
+                if (i + 2 < splittedText.Count)
                 {
-                    var recordData = string.Empty;
+                    count++;
 
-                    if (item == string.Empty & splittedText.Count > splittedText.IndexOf(item))
+                    string recordName = splittedText[i];
+                    string recordText = splittedText[i + 1];
+                    string recordDate = splittedText[i + 2];
+
+                    string recordData = $"{count}. {recordName}\n" +
+                                       $"   {recordText}\n" +
+                                       $"   {recordDate}\n";
+
+                    if (!string.IsNullOrEmpty(recordName) &&
+                        !string.IsNullOrEmpty(recordText) &&
+                        !string.IsNullOrEmpty(recordDate))
                     {
-                         count++;
-
-                         recordData = count.ToString() + ". " + splittedText[splittedText.IndexOf(item) + 1] + "\n" + splittedText[splittedText.IndexOf(item) + 3];
+                        Console.WriteLine(recordData);
                     }
-                    else
-                    {
-                        break;
-                    }
-
-                    Console.WriteLine("\n" + recordData);
                 }
-
-                Console.ForegroundColor = ConsoleColor.White;
-
-                Console.WriteLine("\nListing complited :)");
-
-                break;
             }
+
+            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.WriteLine("\nListing completed :)");
         }
     }
 }
